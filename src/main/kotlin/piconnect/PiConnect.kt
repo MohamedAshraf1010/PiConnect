@@ -19,20 +19,20 @@ class PiConnect private constructor(baseUrl: String, logsEnabled: Boolean) {
         }
     }
 
-    companion object {
-        class Builder {
-            private var baseUrl = ""
-            private var logsEnabled = false
+    class Builder {
+        private var baseUrl = ""
+        private var logsEnabled = false
 
-            fun baseUrl(baseUrl: String) {
-                this.baseUrl = baseUrl
-            }
-
-            fun enableLogs(enable: Boolean) {
-                this.logsEnabled = enable
-            }
-
-            fun build(): PiConnect = PiConnect(baseUrl, logsEnabled)
+        fun baseUrl(baseUrl: String): Builder {
+            this.baseUrl = baseUrl
+            return this
         }
+
+        fun enableLogs(enable: Boolean): Builder {
+            this.logsEnabled = enable
+            return this
+        }
+
+        fun build(): PiConnect = PiConnect(baseUrl, logsEnabled)
     }
 }
