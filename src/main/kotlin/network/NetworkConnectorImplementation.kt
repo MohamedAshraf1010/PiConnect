@@ -1,7 +1,6 @@
 package network
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import piconnect.HttpMethod
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -24,22 +23,29 @@ object NetworkConnectorImplementation: NetworkConnector {
         logsEnabled = enable
     }
 
-    override fun <T> connect(api: String, httpMethod: HttpMethod, headers: Map<String, String>, queries: Map<String, String>, body: Any?): T {
+    fun <T> x(type: Class<T>) {}
+
+    override fun <T> connect(api: String, httpMethod: HttpMethod, headers: Map<String, String>, queries: Map<String, String>, body: Any?, type: Class<T>): T {
         try {
             val urlQueries = prepareQueries(queries)
             val url = URL("$baseUrl/$api$urlQueries")
             log("URL", url.toString())
+            log("Method", httpMethod.method)
             val connection = url.openConnection() as HttpsURLConnection
             connection.requestMethod = httpMethod.method
             connection.doOutput = true
+            connection.doInput = true
             connection.setRequestProperty("Content-Type", "application/json")
+            connection.setRequestProperty("charset", "utf-8")
             headers.forEach { (key, value) -> connection.setRequestProperty(key, value) }
             log("Headers", connection.requestProperties.toString())
-            val payload = body.let { gson.toJson(body) } ?: ""
-            log("Body", payload)
-            val writer = BufferedWriter(OutputStreamWriter(connection.outputStream))
-            writer.write(payload)
-            writer.flush()
+            body?.let {
+                val payload = gson.toJson(body)
+                log("Body", payload)
+                val writer = BufferedWriter(OutputStreamWriter(connection.outputStream))
+                writer.write(payload)
+                writer.flush()
+            }
             val reader = BufferedReader(InputStreamReader(connection.inputStream))
             val out = StringBuilder()
             var line = reader.readLine()
@@ -47,10 +53,10 @@ object NetworkConnectorImplementation: NetworkConnector {
                 out.append(line)
                 line = reader.readLine()
             }
+            connection.disconnect()
             val response = out.toString()
             log("Response", response)
-            val collectionType = object : TypeToken<T>() {}.type
-            return gson.fromJson(response, collectionType)
+            return gson.fromJson(response, type)
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -67,5 +73,7 @@ object NetworkConnectorImplementation: NetworkConnector {
         return urlQueries
     }
 
-    private fun log(key: String, value: String) = println("PiConnect: $key --> $value")
+    private fun log(key: String, value: String) {
+        if (logsEnabled) println("PiConnect: $key --> $value")
+    }
 }

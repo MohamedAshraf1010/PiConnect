@@ -8,5 +8,5 @@ interface NetworkConnector {
 
     fun enableLogs(enable: Boolean)
 
-    fun <T> connect(api: String = "", httpMethod: HttpMethod = HttpMethod.GET, headers: Map<String, String> = mapOf(), queries: Map<String, String> = mapOf(), body: Any? = null): T
+    fun <T> connect(api: String = "", httpMethod: HttpMethod = HttpMethod.GET, headers: Map<String, String> = mapOf(), queries: Map<String, String> = mapOf(), body: Any? = null, type: Class<T>): T
 }
