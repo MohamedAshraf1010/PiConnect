@@ -1,5 +1,5 @@
 package piconnect
 
 enum class HttpMethod(val method: String) {
-    GET("GET"), POST("POST"), UPDATE("UPDATE"), DELETE("DELETE"), PATCH("PATCH")
+    GET("GET"), POST("POST"), PUT("PUT"), DELETE("DELETE"), PATCH("PATCH")
 }
