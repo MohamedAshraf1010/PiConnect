@@ -1,6 +1,7 @@
 package network
 
 import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import piconnect.HttpMethod
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -22,8 +23,6 @@ object NetworkConnectorImplementation: NetworkConnector {
     override fun enableLogs(enable: Boolean) {
         logsEnabled = enable
     }
-
-    fun <T> x(type: Class<T>) {}
 
     override fun <T> connect(api: String, httpMethod: HttpMethod, headers: Map<String, String>, queries: Map<String, String>, body: Any?, type: Class<T>): T {
         try {
@@ -56,7 +55,12 @@ object NetworkConnectorImplementation: NetworkConnector {
             connection.disconnect()
             val response = out.toString()
             log("Response", response)
-            return gson.fromJson(response, type)
+            return try {
+                gson.fromJson(response, type)
+            } catch (ex: JsonParseException) {
+                if (type == String::class.java) return response as T
+                else throw ex
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex

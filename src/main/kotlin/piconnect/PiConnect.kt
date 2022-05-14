@@ -12,10 +12,10 @@ class PiConnect private constructor(baseUrl: String, logsEnabled: Boolean) {
     fun <T> rest(api: String = "", httpMethod: HttpMethod = HttpMethod.GET, headers: Map<String, String> = mapOf(), queries: Map<String, String> = mapOf(), body: Any? = null, responseType: Class<T>): T {
         return when (httpMethod) {
             HttpMethod.GET -> Get(api).run(headers, queries, responseType)
-            HttpMethod.POST -> Post(api).run(headers, queries, body)
-            HttpMethod.UPDATE -> Update(api).run(headers, queries, body)
-            HttpMethod.DELETE -> Delete(api).run(headers, queries, body)
-            HttpMethod.PATCH -> Patch(api).run(headers, queries, body)
+            HttpMethod.POST -> Post(api).run(headers, queries, body, responseType)
+            HttpMethod.PUT -> Put(api).run(headers, queries, body, responseType)
+            HttpMethod.DELETE -> Delete(api).run(headers, queries, body, responseType)
+            HttpMethod.PATCH -> Patch(api).run(headers, queries, body, responseType)
         }
     }
 
