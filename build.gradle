@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'tech.coderbot'
-version '0.0.2'
+version '0.0.3'
 
 repositories {
     mavenCentral()
@@ -11,4 +11,5 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
